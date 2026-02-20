@@ -346,80 +346,76 @@ export default function Creators() {
           {filteredCreators.map(creator => (
             <div
               key={creator._id}
-              className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group"
+              className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group"
             >
-              <div className="relative h-32 bg-gradient-to-r from-blue-500 to-purple-600">
-                {creator.profileImageUrl && (
+              <div className="relative h-40">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 group-hover:from-blue-600/30 group-hover:to-purple-600/30 transition-colors duration-300" />
+                {creator.profileImageUrl ? (
                   <img
                     src={creator.profileImageUrl}
                     alt={creator.name}
-                    className="absolute -bottom-12 left-6 w-24 h-24 rounded-xl border-4 border-white object-cover shadow-lg"
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+                    <UserGroupIcon className="h-12 w-12 text-gray-300" />
+                  </div>
                 )}
+                <div className="absolute top-4 right-4 flex space-x-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <button
+                    onClick={(e) => { e.preventDefault(); handleEdit(creator); }}
+                    className="p-2 bg-white/90 backdrop-blur-sm text-blue-600 hover:bg-white rounded-xl shadow-lg"
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={(e) => { e.preventDefault(); deleteCreator(creator._id); }}
+                    className="p-2 bg-white/90 backdrop-blur-sm text-red-600 hover:bg-white rounded-xl shadow-lg"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="absolute bottom-4 left-4">
+                  <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 text-xs font-bold rounded-lg shadow-sm">
+                    {creator.platform}
+                  </span>
+                </div>
               </div>
 
-              <div className="pt-14 p-6">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{creator.name}</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {creator.platform} • @{creator.username}
-                    </p>
-                  </div>
-                  <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <button
-                      onClick={() => handleEdit(creator)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                      title="Edit"
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </button>
-                    <Link
-                      to={`/creators/${creator._id}`}
-                      className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg"
-                      title="View Details"
-                    >
-                      <EyeIcon className="h-4 w-4" />
-                    </Link>
-                    <button
-                      onClick={() => deleteCreator(creator._id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                      title="Delete"
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </button>
-                  </div>
+              <div className="p-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{creator.name}</h3>
+                  <p className="text-sm font-medium text-gray-500">@{creator.username}</p>
                 </div>
 
-                <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                  <div className="p-2 bg-gray-50 rounded-lg">
-                    <p className="text-xs text-gray-500">Followers</p>
-                    <p className="text-sm font-semibold text-gray-900">
+                <div className="mt-6 grid grid-cols-3 gap-4">
+                  <div className="text-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                    <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Followers</p>
+                    <p className="text-sm font-bold text-gray-900 mt-0.5">
                       {(creator.followers || 0).toLocaleString()}
                     </p>
                   </div>
-                  <div className="p-2 bg-gray-50 rounded-lg">
-                    <p className="text-xs text-gray-500">Engagement</p>
-                    <p className="text-sm font-semibold text-gray-900">
+                  <div className="text-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                    <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Engage</p>
+                    <p className="text-sm font-bold text-gray-900 mt-0.5">
                       {creator.engagementRate || 0}%
                     </p>
                   </div>
-                  <div className="p-2 bg-gray-50 rounded-lg">
-                    <p className="text-xs text-gray-500">Posts</p>
-                    <p className="text-sm font-semibold text-gray-900">
+                  <div className="text-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                    <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Posts</p>
+                    <p className="text-sm font-bold text-gray-900 mt-0.5">
                       {creator.posts || 0}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-4">
-                  <Link
-                    to={`/creators/${creator._id}`}
-                    className="block w-full text-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
-                  >
-                    View Analytics
-                  </Link>
-                </div>
+                <Link
+                  to={`/creators/${creator._id}`}
+                  className="mt-6 flex items-center justify-center space-x-2 w-full px-4 py-3 bg-gray-900 text-white font-bold rounded-2xl hover:bg-blue-600 transition-all duration-300 shadow-lg shadow-gray-200 hover:shadow-blue-200"
+                >
+                  <EyeIcon className="h-5 w-5" />
+                  <span>View Analytics</span>
+                </Link>
               </div>
             </div>
           ))}

@@ -44,13 +44,9 @@ export default function Dashboard() {
   const [error, setError] = useState('');
   const [timeframe, setTimeframe] = useState('week');
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
   const fetchStats = async () => {
     try {
-      const res = await api.get('/analytics/dashboard');
+      const res = await api.get(`/analytics/dashboard?timeframe=${timeframe}`);
       setStats(res.data);
     } catch (err) {
       setError(err.response?.data?.message || 'Error loading dashboard');
@@ -58,6 +54,10 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchStats();
+  }, [timeframe]);
 
   if (loading) {
     return (
@@ -88,43 +88,95 @@ export default function Dashboard() {
       value: stats?.totalCreators || 0,
       change: stats?.creatorsChange || '+12%',
       icon: UserGroupIcon,
-      color: 'from-blue-500 to-blue-600',
-      textColor: 'text-blue-100'
+      color: 'bg-white',
+      textColor: 'text-gray-600',
+      iconColor: 'text-blue-600',
+      borderColor: 'border-blue-100'
     },
     {
       title: 'Total Followers',
       value: (stats?.totalFollowers || 0).toLocaleString(),
       change: stats?.followersChange || '+23%',
       icon: FireIcon,
-      color: 'from-purple-500 to-purple-600',
-      textColor: 'text-purple-100'
+      color: 'bg-white',
+      textColor: 'text-gray-600',
+      iconColor: 'text-purple-600',
+      borderColor: 'border-purple-100'
     },
     {
       title: 'Avg Engagement',
       value: `${stats?.avgEngagement || 0}%`,
       change: stats?.engagementChange || '+5%',
       icon: ArrowTrendingUpIcon,
-      color: 'from-green-500 to-green-600',
-      textColor: 'text-green-100'
+      color: 'bg-white',
+      textColor: 'text-gray-600',
+      iconColor: 'text-green-600',
+      borderColor: 'border-green-100'
     },
     {
       title: 'Total Posts',
       value: (stats?.totalPosts || 0).toLocaleString(),
       change: stats?.postsChange || '+18%',
       icon: ChartBarIcon,
-      color: 'from-orange-500 to-orange-600',
-      textColor: 'text-orange-100'
+      color: 'bg-white',
+      textColor: 'text-gray-600',
+      iconColor: 'text-orange-600',
+      borderColor: 'border-orange-100'
     }
   ];
 
-  // Prepare chart data from real stats
-  const followersLabels = stats?.followersGrowth?.map((_, i) => `Day ${i+1}`) || ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        backgroundColor: '#1f2937',
+        padding: 12,
+        titleFont: { size: 14, weight: 'bold' },
+        bodyFont: { size: 13 },
+        cornerRadius: 8,
+        displayColors: false
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        border: { display: false },
+        grid: {
+          display: true,
+          color: 'rgba(0, 0, 0, 0.03)',
+          drawTicks: false
+        },
+        ticks: {
+          color: '#9ca3af',
+          font: { size: 11 },
+          padding: 10
+        }
+      },
+      x: {
+        border: { display: false },
+        grid: {
+          display: false
+        },
+        ticks: {
+          color: '#9ca3af',
+          font: { size: 11 },
+          padding: 10
+        }
+      }
+    }
+  };
+
+  const followersLabels = stats?.followersGrowth?.map((_, i) => timeframe === 'day' ? `${i}:00` : `Day ${i+1}`) || [];
   const followersData = {
     labels: followersLabels,
     datasets: [
       {
         label: 'Followers Growth',
-        data: stats?.followersGrowth || [12000, 19000, 15000, 25000, 22000, 30000, 38000],
+        data: stats?.followersGrowth || [],
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         tension: 0.4,
@@ -133,13 +185,13 @@ export default function Dashboard() {
     ]
   };
 
-  const engagementLabels = stats?.engagementHistory?.map((_, i) => `Day ${i+1}`) || ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const engagementLabels = stats?.engagementHistory?.map((_, i) => timeframe === 'day' ? `${i}:00` : `Day ${i+1}`) || [];
   const engagementData = {
     labels: engagementLabels,
     datasets: [
       {
         label: 'Engagement Rate %',
-        data: stats?.engagementHistory || [2.5, 3.0, 2.8, 3.2, 3.5, 4.0, 3.8],
+        data: stats?.engagementHistory || [],
         borderColor: 'rgb(16, 185, 129)',
         backgroundColor: 'rgba(16, 185, 129, 0.1)',
         tension: 0.4,
@@ -148,12 +200,12 @@ export default function Dashboard() {
     ]
   };
 
-  const platformLabels = Object.keys(stats?.platformDistribution || { Instagram: 45, YouTube: 25, TikTok: 20, X: 10 });
+  const platformLabels = Object.keys(stats?.platformDistribution || {});
   const platformData = {
     labels: platformLabels,
     datasets: [
       {
-        data: Object.values(stats?.platformDistribution || { Instagram: 45, YouTube: 25, TikTok: 20, X: 10 }),
+        data: Object.values(stats?.platformDistribution || {}),
         backgroundColor: [
           'rgba(236, 72, 153, 0.8)',
           'rgba(239, 68, 68, 0.8)',
@@ -165,45 +217,24 @@ export default function Dashboard() {
     ]
   };
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          display: true,
-          color: 'rgba(0, 0, 0, 0.05)'
-        }
-      },
-      x: {
-        grid: {
-          display: false
-        }
-      }
-    }
-  };
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-          Dashboard Overview
-        </h1>
-        <div className="flex space-x-2">
+        <div>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Dashboard Overview
+          </h1>
+          <p className="text-gray-500 mt-1">Welcome back! Here's what's happening with your creators.</p>
+        </div>
+        <div className="flex bg-white p-1 rounded-xl shadow-sm border border-gray-100">
           {['day', 'week', 'month', 'year'].map((t) => (
             <button
               key={t}
               onClick={() => setTimeframe(t)}
-              className={`px-3 py-1 text-sm font-medium rounded-lg capitalize transition-colors duration-200 ${
+              className={`px-4 py-1.5 text-sm font-semibold rounded-lg capitalize transition-all duration-200 ${
                 timeframe === t
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
               {t}
@@ -212,38 +243,32 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statsCards.map((card, index) => (
           <div
             key={index}
-            className={`bg-gradient-to-br ${card.color} rounded-xl shadow-lg p-6 text-white transform transition-all duration-300 hover:scale-105 hover:shadow-xl`}
+            className={`${card.color} rounded-2xl border ${card.borderColor} shadow-sm p-6 transform transition-all duration-300 hover:shadow-md hover:-translate-y-1`}
           >
             <div className="flex items-center justify-between">
-              <div>
-                <p className={`${card.textColor} text-sm`}>{card.title}</p>
-                <p className="text-2xl font-bold mt-1">{card.value}</p>
-                <p className={`${card.textColor} text-sm mt-2 flex items-center`}>
-                  <ArrowTrendingUpIcon className="h-4 w-4 mr-1" />
-                  {card.change}
-                </p>
+              <div className={`p-3 rounded-xl ${card.iconColor} bg-opacity-10 bg-current`}>
+                <card.icon className="h-6 w-6" />
               </div>
-              <card.icon className="h-12 w-12 opacity-50" />
+              <span className={`text-xs font-bold px-2 py-1 rounded-full bg-green-50 text-green-700`}>
+                {card.change}
+              </span>
+            </div>
+            <div className="mt-4">
+              <p className="text-sm font-medium text-gray-500">{card.title}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{card.value}</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Followers Growth</h3>
-            <select className="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option>Last 7 days</option>
-              <option>Last 30 days</option>
-              <option>Last 3 months</option>
-            </select>
           </div>
           <div className="h-64">
             <Line data={followersData} options={chartOptions} />
@@ -253,11 +278,6 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Engagement Rate</h3>
-            <select className="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option>Last 7 days</option>
-              <option>Last 30 days</option>
-              <option>Last 3 months</option>
-            </select>
           </div>
           <div className="h-64">
             <Line data={engagementData} options={chartOptions} />
@@ -287,7 +307,7 @@ export default function Dashboard() {
             <div className="md:col-span-2">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Performing Creators</h3>
               <div className="space-y-3">
-                {(stats?.topCreators || [1,2,3].map(i => ({ name: `Creator ${i}`, username: `creator${i}`, followers: 150000*i, engagement: 3+i }))).map((creator, i) => (
+                {(stats?.topCreators || []).map((creator, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">

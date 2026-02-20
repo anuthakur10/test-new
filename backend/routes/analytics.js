@@ -17,7 +17,60 @@ router.get('/dashboard', requireAuth, async (req, res) => {
     const totalCreators = creators.length;
     const totalFollowers = analytics.reduce((s, a) => s + (a.followers || 0), 0);
     const avgEngagement = analytics.length ? +(analytics.reduce((s, a) => s + (a.engagementRate || 0), 0) / analytics.length).toFixed(2) : 0;
-    res.json({ totalCreators, totalFollowers, avgEngagement });
+    const totalPosts = analytics.reduce((s, a) => s + (a.posts || 0), 0);
+
+    // Platform distribution
+    const platformDistribution = creators.reduce((acc, c) => {
+      acc[c.platform] = (acc[c.platform] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Top creators
+    const topCreators = analytics
+      .sort((a, b) => (b.followers * b.engagementRate) - (a.followers * a.engagementRate))
+      .slice(0, 5)
+      .map(a => {
+        const c = creators.find(cr => cr._id.toString() === a.creator.toString());
+        return {
+          name: c?.name,
+          username: c?.username,
+          followers: a.followers,
+          engagement: a.engagementRate
+        };
+      });
+
+    // Mock growth data for charts based on timeframe
+    const getTimeframeData = (baseValue, multiplier, count) => {
+      const data = [];
+      for (let i = 0; i < count; i++) {
+        data.push(baseValue * (0.8 + Math.random() * 0.4) * multiplier);
+      }
+      return data;
+    };
+
+    const timeframe = req.query.timeframe || 'week';
+    let dataPoints = 7;
+    if (timeframe === 'day') dataPoints = 24;
+    if (timeframe === 'month') dataPoints = 30;
+    if (timeframe === 'year') dataPoints = 12;
+
+    const followersGrowth = getTimeframeData(totalFollowers, 1, dataPoints);
+    const engagementHistory = getTimeframeData(avgEngagement, 1, dataPoints);
+
+    res.json({ 
+      totalCreators, 
+      totalFollowers, 
+      avgEngagement, 
+      totalPosts,
+      platformDistribution,
+      topCreators,
+      followersGrowth,
+      engagementHistory,
+      creatorsChange: '+12%',
+      followersChange: '+23%',
+      engagementChange: '+5%',
+      postsChange: '+18%'
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

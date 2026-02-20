@@ -34,10 +34,23 @@ router.get('/', requireAuth, async (req, res) => {
     const page = parseInt(req.query.page || '1', 10);
     const limit = Math.min(parseInt(req.query.limit || '50', 10), 200);
     const skip = (page - 1) * limit;
+    
     let query = {};
-    if (req.user.role !== 'admin') query.user = req.user._id;
+    // If user is not admin, only show their own creators
+    if (req.user.role !== 'admin') {
+      query.user = req.user._id;
+    } else if (req.query.userId) {
+      // Admin can filter by specific user
+      query.user = req.query.userId;
+    }
+
     const total = await Creator.countDocuments(query);
-    const creators = await Creator.find(query).populate('user', 'name email').sort({ createdAt: -1 }).skip(skip).limit(limit);
+    const creators = await Creator.find(query)
+      .populate('user', 'name email')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+      
     res.json({ creators, total, page, limit });
   } catch (err) {
     console.error('List creators error', err);

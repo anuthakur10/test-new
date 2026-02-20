@@ -138,56 +138,101 @@ export default function Analytics() {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
+    plugins: { 
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1f2937',
+        padding: 12,
+        cornerRadius: 8,
+        displayColors: false
+      }
+    },
     scales: {
-      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-      x: { grid: { display: false } }
+      y: { 
+        beginAtZero: true, 
+        border: { display: false },
+        grid: { color: 'rgba(0,0,0,0.03)', drawTicks: false },
+        ticks: { color: '#9ca3af', font: { size: 11 } }
+      },
+      x: { 
+        border: { display: false },
+        grid: { display: false },
+        ticks: { color: '#9ca3af', font: { size: 11 } }
+      }
     }
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-        Analytics Overview
-      </h1>
+    <div className="space-y-8 pb-10">
+      <div>
+        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+          Analytics Overview
+        </h1>
+        <p className="text-gray-500 mt-1">Deep dive into your creator performance metrics.</p>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statsCards.map((card, idx) => (
-          <div key={idx} className={`bg-gradient-to-br ${card.color} rounded-xl shadow-lg p-6 text-white`}>
+          <div key={idx} className={`bg-gradient-to-br ${card.color} rounded-2xl shadow-lg p-6 text-white transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm opacity-90">{card.title}</p>
-                <p className="text-2xl font-bold mt-1">{card.value}</p>
-                <p className="text-sm opacity-90 mt-2 flex items-center">
+                <p className="text-sm opacity-80 font-medium">{card.title}</p>
+                <p className="text-3xl font-bold mt-1">{card.value}</p>
+                <div className="mt-4 flex items-center bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1 w-fit">
                   <ArrowTrendingUpIcon className="h-4 w-4 mr-1" />
-                  {card.change}
-                </p>
+                  <span className="text-xs font-bold">{card.change}</span>
+                </div>
               </div>
-              <card.icon className="h-12 w-12 opacity-50" />
+              <div className="p-3 bg-white/10 rounded-2xl">
+                <card.icon className="h-8 w-8 text-white" />
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold mb-4">Followers Growth</h3>
-          <div className="h-64">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 transition-all hover:shadow-md">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-900">Followers Growth</h3>
+            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Live</span>
+          </div>
+          <div className="h-72">
             <Line data={followersData} options={chartOptions} />
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold mb-4">Engagement Rate</h3>
-          <div className="h-64">
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 transition-all hover:shadow-md">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-900">Engagement Rate</h3>
+            <span className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full uppercase tracking-wider">Active</span>
+          </div>
+          <div className="h-72">
             <Line data={engagementData} options={chartOptions} />
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-lg font-semibold mb-4">Platform Distribution</h3>
-        <div className="h-64 max-w-md mx-auto">
-          <Doughnut data={platformData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }} />
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 transition-all hover:shadow-md">
+        <h3 className="text-xl font-bold text-gray-900 mb-8">Platform Distribution</h3>
+        <div className="h-80 max-w-lg mx-auto">
+          <Doughnut 
+            data={platformData} 
+            options={{ 
+              responsive: true, 
+              maintainAspectRatio: false, 
+              plugins: { 
+                legend: { 
+                  position: 'bottom',
+                  labels: {
+                    usePointStyle: true,
+                    padding: 25,
+                    font: { size: 13, weight: 'bold' }
+                  }
+                } 
+              },
+              cutout: '70%'
+            }} 
+          />
         </div>
       </div>
     </div>

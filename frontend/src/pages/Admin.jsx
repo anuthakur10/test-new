@@ -6,18 +6,14 @@ import {
   UserGroupIcon,
   ChartBarIcon,
   ShieldCheckIcon,
-  ExclamationTriangleIcon,
   CheckCircleIcon,
   XCircleIcon,
   MagnifyingGlassIcon,
-  FunnelIcon
 } from '@heroicons/react/24/outline';
 import {
   Bar,
   Doughnut,
-  Line
 } from 'react-chartjs-2';
-import { Link } from 'react-router-dom';
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
@@ -83,7 +79,6 @@ export default function Admin() {
     return (
       <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded">
         <div className="flex">
-          <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
           <div className="ml-3">
             <p className="text-sm text-red-700">{error}</p>
           </div>
@@ -92,14 +87,8 @@ export default function Admin() {
     );
   }
 
-  // Platform distribution from creators list (or use stats if available)
-  const platformDistributionData = stats?.platformDistribution || {
-    Instagram: creators.filter(c => c.platform === 'Instagram').length,
-    YouTube: creators.filter(c => c.platform === 'YouTube').length,
-    TikTok: creators.filter(c => c.platform === 'TikTok').length,
-    X: creators.filter(c => c.platform === 'X').length
-  };
-
+  const platformDistributionData = stats?.platformDistribution || {};
+  
   const platformDistribution = {
     labels: Object.keys(platformDistributionData),
     datasets: [
@@ -116,7 +105,6 @@ export default function Admin() {
     ]
   };
 
-  // User activity data – use real stats if available, else fallback
   const userActivityData = {
     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     datasets: [
@@ -131,75 +119,72 @@ export default function Admin() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-          Admin Panel
-        </h1>
-        <div className="flex items-center space-x-2">
-          <ShieldCheckIcon className="h-6 w-6 text-purple-600" />
-          <span className="text-sm font-medium text-purple-600">Admin Access</span>
+        <div>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center">
+            Admin Panel
+            <ShieldCheckIcon className="h-8 w-8 text-purple-600 ml-3" />
+          </h1>
+          <p className="text-gray-500 mt-1">Global platform oversight and user management.</p>
         </div>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-2xl border border-blue-100 shadow-sm p-6 transform transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-blue-100 text-sm">Total Users</p>
-              <p className="text-3xl font-bold mt-1">{users.length}</p>
-              <p className="text-blue-100 text-sm mt-2">
-                {users.filter(u => u.role === 'admin').length} Admins
-              </p>
+            <div className="p-3 bg-blue-50 rounded-xl text-blue-600">
+              <UsersIcon className="h-6 w-6" />
             </div>
-            <UsersIcon className="h-12 w-12 text-blue-200" />
+            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">Users</span>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-500">Total Users</p>
+            <p className="text-3xl font-bold text-gray-900 mt-1">{users.length}</p>
+            <p className="text-xs text-gray-400 mt-1">{users.filter(u => u.role === 'admin').length} Admins</p>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+        <div className="bg-white rounded-2xl border border-purple-100 shadow-sm p-6 transform transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-purple-100 text-sm">Total Creators</p>
-              <p className="text-3xl font-bold mt-1">{creators.length}</p>
-              <p className="text-purple-100 text-sm mt-2">
-                {creators.filter(c => c.isActive).length} Active
-              </p>
+            <div className="p-3 bg-purple-50 rounded-xl text-purple-600">
+              <UserGroupIcon className="h-6 w-6" />
             </div>
-            <UserGroupIcon className="h-12 w-12 text-purple-200" />
+            <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-lg">Creators</span>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-500">Total Creators</p>
+            <p className="text-3xl font-bold text-gray-900 mt-1">{creators.length}</p>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
+        <div className="bg-white rounded-2xl border border-green-100 shadow-sm p-6 transform transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-green-100 text-sm">Total Followers</p>
-              <p className="text-3xl font-bold mt-1">
-                {(stats?.totalFollowers || 0).toLocaleString()}
-              </p>
-              <p className="text-green-100 text-sm mt-2">
-                +12.5% vs last month
-              </p>
+            <div className="p-3 bg-green-50 rounded-xl text-green-600">
+              <ChartBarIcon className="h-6 w-6" />
             </div>
-            <ChartBarIcon className="h-12 w-12 text-green-200" />
+            <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-lg">Reach</span>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-500">Total Followers</p>
+            <p className="text-3xl font-bold text-gray-900 mt-1">{(stats?.totalFollowers || 0).toLocaleString()}</p>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg p-6 text-white">
+        <div className="bg-white rounded-2xl border border-orange-100 shadow-sm p-6 transform transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-orange-100 text-sm">Avg Engagement</p>
-              <p className="text-3xl font-bold mt-1">{stats?.avgEngagement || 0}%</p>
-              <p className="text-orange-100 text-sm mt-2">
-                +2.1% vs last month
-              </p>
+            <div className="p-3 bg-orange-50 rounded-xl text-orange-600">
+              <ChartBarIcon className="h-6 w-6" />
             </div>
-            <ChartBarIcon className="h-12 w-12 text-orange-200" />
+            <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-lg">Engage</span>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-500">Avg Engagement</p>
+            <p className="text-3xl font-bold text-gray-900 mt-1">{stats?.avgEngagement || 0}%</p>
           </div>
         </div>
       </div>
 
-      {/* Analytics Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Platform Distribution</h3>
@@ -238,171 +223,93 @@ export default function Admin() {
         </div>
       </div>
 
-      {/* User Management */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h3 className="text-lg font-semibold text-gray-900">User Management</h3>
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden transition-all hover:shadow-md">
+        <div className="px-8 py-6 border-b border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+            <h3 className="text-xl font-bold text-gray-900 tracking-tight">User Management</h3>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative group">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
                 <input
                   type="text"
                   placeholder="Search users..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all bg-gray-50/50"
                 />
               </div>
 
-              <div className="relative">
-                <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <select
-                  value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-                  className="pl-9 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                >
-                  <option value="all">All Roles</option>
-                  <option value="user">Users</option>
-                  <option value="admin">Admins</option>
-                </select>
-              </div>
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="px-4 py-2 border border-gray-200 rounded-xl text-sm font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-gray-50/50"
+              >
+                <option value="all">All Roles</option>
+                <option value="user">Users</option>
+                <option value="admin">Admins</option>
+              </select>
             </div>
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-100">
+            <thead className="bg-gray-50/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">User</th>
+                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Role</th>
+                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Creators</th>
+                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Status</th>
+                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {filteredUsers.map((user) => (
-                <tr key={user._id} className="hover:bg-gray-50 transition-colors duration-200">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={user._id} className="hover:bg-blue-50/30 transition-colors duration-200 group">
+                  <td className="px-8 py-5 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
-                          <span className="text-white font-medium text-sm">
-                            {user.name?.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
+                      <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                        {user.name?.charAt(0).toUpperCase()}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
+                        <div className="text-sm font-bold text-gray-900">{user.name}</div>
+                        <div className="text-xs text-gray-500 font-medium">{user.email}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      user.role === 'admin'
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'bg-blue-100 text-blue-700'
+                  <td className="px-8 py-5 whitespace-nowrap">
+                    <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${
+                      user.role === 'admin' ? 'bg-purple-50 text-purple-700' : 'bg-blue-50 text-blue-700'
                     }`}>
                       {user.role}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      {user.disabled ? (
-                        <>
-                          <XCircleIcon className="h-5 w-5 text-red-500 mr-2" />
-                          <span className="text-sm text-red-700">Inactive</span>
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                          <span className="text-sm text-green-700">Active</span>
-                        </>
-                      )}
-                    </div>
+                  <td className="px-8 py-5 whitespace-nowrap">
+                    <span className="text-sm font-bold text-gray-900">{user.creatorCount || 0}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                  <td className="px-8 py-5 whitespace-nowrap">
+                    {user.disabled ? (
+                      <span className="flex items-center text-red-600 text-xs font-bold uppercase tracking-wider">
+                        <XCircleIcon className="h-4 w-4 mr-1.5" /> Inactive
+                      </span>
+                    ) : (
+                      <span className="flex items-center text-green-600 text-xs font-bold uppercase tracking-wider">
+                        <CheckCircleIcon className="h-4 w-4 mr-1.5" /> Active
+                      </span>
+                    )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-8 py-5 whitespace-nowrap text-right">
                     <button
                       onClick={() => toggleDisable(user._id, user.disabled)}
-                      className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                      className={`inline-flex items-center px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
                         user.disabled
-                          ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                          : 'bg-red-100 text-red-700 hover:bg-red-200'
+                          ? 'bg-green-600 text-white hover:bg-green-700 shadow-md shadow-green-100'
+                          : 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white'
                       }`}
                     >
                       {user.disabled ? 'Enable' : 'Disable'}
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Creators Overview */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Creators Overview</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Creator</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Platform</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Followers</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Engagement</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {creators.slice(0, 5).map((creator) => (
-                <tr key={creator._id} className="hover:bg-gray-50 transition-colors duration-200">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <img
-                          className="h-10 w-10 rounded-lg object-cover"
-                          src={creator.profileImageUrl || 'https://via.placeholder.com/40'}
-                          alt={creator.name}
-                        />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{creator.name}</div>
-                        <div className="text-sm text-gray-500">@{creator.username}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
-                      {creator.platform}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {creator.user?.name || 'N/A'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {creator.followers?.toLocaleString() || 0}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {creator.engagementRate || 0}%
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <Link
-                      to={`/creators/${creator._id}`}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      View
-                    </Link>
                   </td>
                 </tr>
               ))}
