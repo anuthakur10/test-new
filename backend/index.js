@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
+import dotenv from "dotenv";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -31,6 +33,9 @@ const PORT = process.env.PORT || 3001;
 
 connectDB();
 
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 app.use('/api/auth', authRoutes);
 app.use('/api/creators', creatorRoutes);
 app.use('/api/upload', uploadRoutes);
