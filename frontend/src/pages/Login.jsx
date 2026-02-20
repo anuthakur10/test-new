@@ -265,19 +265,7 @@ export default function Login() {
             </p>
           </form>
         </div>
-
-        {/* Demo Credentials (for testing) */}
-        <div className="mt-6 bg-blue-50 rounded-xl p-4 border border-blue-100">
-          <p className="text-xs font-medium text-blue-800 mb-2">Demo Accounts:</p>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="text-blue-700">
-              <span className="font-medium">User:</span> user@example.com / password123
-            </div>
-            <div className="text-purple-700">
-              <span className="font-medium">Admin:</span> testAdmin@gmail.com / (your password)
-            </div>
-          </div>
-        </div>
+       
       </div>
     </div>
   );
