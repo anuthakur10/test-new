@@ -157,7 +157,9 @@ export default function Creators() {
     return matchesSearch && matchesPlatform;
   });
 
-  const platforms = ['all', 'Instagram', 'YouTube', 'TikTok', 'X'];
+  const platforms = ['all', 'Instagram', 'YouTube',
+    //  'TikTok',
+      'X'];
 
   if (loading) {
     return (
@@ -224,7 +226,7 @@ export default function Creators() {
                 >
                   <option>Instagram</option>
                   <option>YouTube</option>
-                  <option>TikTok</option>
+                  {/* <option>TikTok</option> */}
                   <option>X</option>
                 </select>
               </div>
